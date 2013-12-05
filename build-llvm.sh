@@ -55,9 +55,9 @@ elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR ]; then
 	tar -xzf llvm-${LLVM_VERSION}.src.tar.gz 
 	mv llvm-${LLVM_VERSION}.src llvm-${LLVM_VERSION}
 	echo "Fetching Clang $LLVM_VERSION from LLVM release server"
-	wget -nc  http://llvm.org/releases/${LLVM_VERSION}/clang-${LLVM_VERSION}.src.tar.gz
-	tar -xzf clang-${LLVM_VERSION}.src.tar.gz
-	mv clang-${LLVM_VERSION}.src llvm-${LLVM_VERSION}/tools/clang
+	wget -nc  http://llvm.org/releases/${LLVM_VERSION}/cfe-${LLVM_VERSION}.src.tar.gz
+	tar -xzf cfe-${LLVM_VERSION}.src.tar.gz
+	mv cfe-${LLVM_VERSION}.src llvm-${LLVM_VERSION}/tools/clang
 fi
 
 echo
