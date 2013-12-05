@@ -1,0 +1,5 @@
+BuildScripts TODO
+=================
+
+- Detect incomplete downloads rather than failing later randomly (we can probably check error reported by tar e.g. missing EOF)
+
