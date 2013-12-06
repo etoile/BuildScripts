@@ -26,7 +26,7 @@ if [ -n "$ETOILE_VERSION" ]; then
 		# Create 'include' and 'lib' directories inside the Build directory
 		CMAKEOPTS='-DCMAKE_INSTALL_PREFIX=.' 
 	fi
-	($DUMP_ENV) && ( eval cmake -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release $CMAKEOPTS .. $LOG_RULE_TEMPLATE ) && ($MAKE_BUILD) && ($MAKE_INSTALL)
+	($DUMP_ENV) && ( eval cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release $CMAKEOPTS .. $LOG_RULE_TEMPLATE ) && ($MAKE_BUILD) && ($MAKE_INSTALL)
 	STATUS=$?
 	if [ "$TEST_BUILD" = "yes" ]; then
 		# In case, libdispatch was not installed as a dependency previously (e.g. in /usr/local)
