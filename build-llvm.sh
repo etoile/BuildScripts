@@ -34,6 +34,13 @@ if [ -n "$HAVE_CLANG_3_4" ]; then
 	echo "Using installed version of LLVM/clang"
 	export LLVM_VERSION=installed
 
+	# Workaround for:
+	# https://bugs.launchpad.net/ubuntu/+source/llvm-3.1/+bug/991493
+	if [ ! -f /usr/bin/llvm-config ]; then
+		echo "Symlinking /usr/bin/llvm-config to /usr/bin/llvm-config-3.4"
+		sudo ln -s /usr/bin/llvm-config-3.4 /usr/bin/llvm-config
+	fi
+
 	export STATUS=0
 	rm -f $LLVM_ENV_FILE
 
