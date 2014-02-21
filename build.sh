@@ -18,7 +18,7 @@ do
       echo
       echo "`basename $0` - Script to build, test and install the Etoile environment "
       echo
-      echo "Note: this script appends a new line to ~/.bashrc for --update-bashrc=yes"
+      echo "Note: this script appends a new line to ~/.bashrc for --update-bash-rc=yes"
       echo
       echo "Requirements: "
       echo
@@ -60,7 +60,7 @@ do
       echo "                            must have been built before for the same GNUstep "
       echo "                            versions and in the same build directory."
       echo "                            (default: no)"
-      echo "  --update-bashrc         - Boolean value, either 'yes' or 'no', to indicate if "
+      echo "  --update-bash-rc        - Boolean value, either 'yes' or 'no', to indicate if "
       echo "                            the ~/.bashrc file should be updated to include the "
       echo "                            environment variables required for GNUstep and "
       echo "                            development. If --test-build is yes, this option is "
