@@ -29,6 +29,17 @@ LLVM_URL_GIT=http://llvm.org/git/llvm.git
 # Clang git mirror
 CLANG_URL_GIT=http://llvm.org/git/clang.git
 
+HAVE_CLANG_3_4=$(dpkg -s clang-3.4 | grep "install ok installed")
+if [ -n "$HAVE_CLANG_3_4" ]; then
+	echo "Using installed version of LLVM/clang"
+	export LLVM_VERSION=installed
+
+	export STATUS=0
+	rm -f $LLVM_ENV_FILE
+
+	echo "export CC=clang" > $LLVM_ENV_FILE
+fi
+
 if [ "$LLVM_VERSION" = "trunk" ]; then
 
 	if [ "$LLVM_ACCESS" = "svn" ]; then
@@ -48,7 +59,7 @@ if [ "$LLVM_VERSION" = "trunk" ]; then
 		fi
 	fi
 
-elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR ]; then
+elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR -a "$LLVM_VERSION" != "installed" ]; then
 
 	echo "Fetching LLVM $LLVM_VERSION from LLVM release server"
 	wget -nc http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.gz
@@ -62,7 +73,7 @@ fi
 
 echo
 
-if [ -n "$LLVM_VERSION" ]; then
+if [ -n "$LLVM_VERSION" -a "$LLVM_VERSION" != "installed" ]; then
 
 	echo "Building and Installing LLVM and Clang"
 	echo
