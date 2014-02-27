@@ -44,7 +44,8 @@ if [ -n "$HAVE_CLANG_3_3" ]; then
 	export STATUS=0
 	rm -f $LLVM_ENV_FILE
 
-	echo "export CC=clang" > $LLVM_ENV_FILE
+	echo "export CC=clang" >> $LLVM_ENV_FILE
+	echo "export CXX=clang++" >> $LLVM_ENV_FILE
 fi
 
 if [ "$LLVM_VERSION" = "trunk" ]; then
@@ -107,6 +108,7 @@ if [ -n "$LLVM_VERSION" -a "$LLVM_VERSION" != "installed" ]; then
 		# Put LLVM in the path (it must come first to take over any prior LLVM install)
 		( echo "export PATH=$LLVM_INSTALL_DIR/bin:\$PATH"
 		  echo "export LD_LIBRARY_PATH=$LLVM_INSTALL_DIR/lib:\$LD_LIBRARY_PATH"
-		  echo "export CC=clang" ) > $LLVM_ENV_FILE
+		  echo "export CC=clang"
+		  echo "export CXX=clang++" ) > $LLVM_ENV_FILE
 	fi
 fi

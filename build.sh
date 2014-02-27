@@ -405,6 +405,7 @@ if [ $STATUS -eq 0 -a "$TEST_BUILD" != "yes" ]; then
 		echo "export PATH=$LLVM_INSTALL_DIR/bin:$PATH" >> ~/.bashrc
 		echo "export LD_LIBRARY_PATH=$LLVM_INSTALL_DIR/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
 		echo "export CC=clang" >> ~/.bashrc
+		echo "export CXX=clang++" >> ~/.bashrc
 		echo ". ${PREFIX_DIR%/}/System/Library/Makefiles/GNUstep.sh" >> ~/.bashrc
 	else
 
@@ -414,6 +415,7 @@ if [ $STATUS -eq 0 -a "$TEST_BUILD" != "yes" ]; then
 		echo "export PATH=$LLVM_INSTALL_DIR/bin:\$PATH"
 		echo "export LD_LIBRARY_PATH=$LLVM_INSTALL_DIR/lib:\$LD_LIBRARY_PATH"
 		echo "export CC=clang" >> ~/.bashrc
+		echo "export CXX=clang++" >> ~/.bashrc
 		echo ". ${PREFIX_DIR%/}/System/Library/Makefiles/GNUstep.sh"
 
 	fi
