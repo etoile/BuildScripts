@@ -173,7 +173,7 @@ exec >> "$out" 2>> "$out"
 # Override some variables for test builds
 
 if [ "$TEST_BUILD" = "yes" ]; then
-	DEPENDENCY_SCRIPT=
+#	DEPENDENCY_SCRIPT=
 	SUDO=
 fi
 
