@@ -16,11 +16,18 @@ fi
 sudo apt-get -q=2 install hal
 
 sudo apt-get -q=2 install libjpeg-dev libtiff-dev libpng-dev libgif-dev
-sudo apt-get -q=2 install libjpeg62-dev libtiff4-dev libpng12-dev libgif-dev
 
-sudo apt-get -q=2 install cmake gobjc libxml2-dev libxslt1-dev libffi-dev libssl-dev libgnutls-dev libicu-dev libfreetype6-dev libx11-dev libcairo2-dev libxft-dev libxmu-dev dbus libdbus-1-dev libstartup-notification0-dev libxcursor-dev libxss-dev xscreensaver g++ libpoppler-dev libonig-dev  lemon libgmp3-dev libsqlite3-dev libkqueue-dev libpthread-workqueue-dev libavcodec-dev libavformat-dev libtagc0-dev libmp4v2-dev discount libgraphviz-dev
+sudo apt-get -q=2 install cmake gobjc libxml2-dev libxslt1-dev libffi-dev libssl-dev libgnutls-dev libicu-dev libfreetype6-dev libx11-dev libcairo2-dev libxft-dev libxmu-dev dbus libdbus-1-dev lemon libgmp3-dev libsqlite3-dev libkqueue-dev libpthread-workqueue-dev libavcodec-dev libavformat-dev libtagc0-dev libmp4v2-dev discount libgraphviz-dev
 
-sudo apt-get -q=2 install clang-3.3 libclang-3.3-dev
+if [ "$LLVM_VERSION" = "packaged" ]; then
+	echo
+	echo "Installing clang 3.3 packages" 
+	sudo apt-get -q=2 install clang-3.3 libclang-3.3-dev
+fi
+
+# Install some packages used in Etoile SVN but not in the new Git repository
+
+sudo apt-get -q=2 install libonig-dev libstartup-notification0-dev libxcursor-dev libxss-dev xscreensaver g++ libpoppler-dev 
 
 # Install Subversion to be able to check out Etoile and Git for LLVM
 

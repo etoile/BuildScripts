@@ -29,26 +29,32 @@ LLVM_URL_GIT=http://llvm.org/git/llvm.git
 # Clang git mirror
 CLANG_URL_GIT=http://llvm.org/git/clang.git
 
-HAVE_CLANG_3_3=$(dpkg -s clang-3.3 | grep "install ok installed")
-if [ -n "$HAVE_CLANG_3_3" ]; then
-	echo "Using installed version of LLVM/clang"
-	export LLVM_VERSION=installed
 
-	# Workaround for:
-	# https://bugs.launchpad.net/ubuntu/+source/llvm-3.1/+bug/991493
-	if [ ! -f /usr/bin/llvm-config ]; then
-		echo "Symlinking /usr/bin/llvm-config to /usr/bin/llvm-config-3.3"
-		sudo ln -s /usr/bin/llvm-config-3.3 /usr/bin/llvm-config
+if [ "$LLVM_VERSION" = "packaged" ]; then
+
+	echo "Using packaged version of LLVM/clang"
+
+	# FIXME: Support LLVM 3.4 packages and higher.
+	HAVE_CLANG_3_3=$(dpkg -s clang-3.3 | grep "install ok installed")
+
+	if [ -z "$HAVE_CLANG_3_3" ]; then
+
+		echo "Warning: LLVM/clang 3.3 package is not installed (more recent packages are not supported yet)"
+		export STATUS=1
+
+	else
+
+		# Workaround for:
+		# https://bugs.launchpad.net/ubuntu/+source/llvm-3.1/+bug/991493
+		if [ ! -f /usr/bin/llvm-config ]; then
+			echo "Symlinking /usr/bin/llvm-config to /usr/bin/llvm-config-3.3"
+			sudo ln -s /usr/bin/llvm-config-3.3 /usr/bin/llvm-config
+		fi
+
+		export STATUS=0
 	fi
 
-	export STATUS=0
-	rm -f $LLVM_ENV_FILE
-
-	echo "export CC=clang" >> $LLVM_ENV_FILE
-	echo "export CXX=clang++" >> $LLVM_ENV_FILE
-fi
-
-if [ "$LLVM_VERSION" = "trunk" ]; then
+elif [ "$LLVM_VERSION" = "trunk" ]; then
 
 	if [ "$LLVM_ACCESS" = "svn" ]; then
 
@@ -67,7 +73,7 @@ if [ "$LLVM_VERSION" = "trunk" ]; then
 		fi
 	fi
 
-elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR -a "$LLVM_VERSION" != "installed" ]; then
+elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR ]; then
 
 	echo "Fetching LLVM $LLVM_VERSION from LLVM release server"
 	wget -nc http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.gz
@@ -77,11 +83,22 @@ elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR -a "$LLVM_VERSION" != "instal
 	wget -nc  http://llvm.org/releases/${LLVM_VERSION}/cfe-${LLVM_VERSION}.src.tar.gz
 	tar -xzf cfe-${LLVM_VERSION}.src.tar.gz
 	mv cfe-${LLVM_VERSION}.src llvm-${LLVM_VERSION}/tools/clang
+
+elif [ -z "$LLVM_VERSION" ]; then
+
+	HAVE_CLANG_3_3_OR_HIGHER=$(clang -v 2>&1 | grep "clang version 3.[3-9]")
+
+	if [ -z "$HAVE_CLANG_3_3_OR_HIGHER" ]; then
+		echo "Warning: LLVM/clang 3.3 or higher is not installed (older versions are not supported)"
+		export STATUS=1
+	else
+		export STATUS=0
+	fi
 fi
 
 echo
 
-if [ -n "$LLVM_VERSION" -a "$LLVM_VERSION" != "installed" ]; then
+if [ -n "$LLVM_VERSION" -a "$LLVM_VERSION" != "packaged" -a -n "$LLVM_VERSION" ]; then
 
 	echo "Building and Installing LLVM and Clang"
 	echo
@@ -101,14 +118,31 @@ if [ -n "$LLVM_VERSION" -a "$LLVM_VERSION" != "installed" ]; then
 	export STATUS=$?
 	cd ..
 	
-	if [ $STATUS -eq 0 ]; then 
+fi
 
-		rm -f $LLVM_ENV_FILE
+if [ $STATUS -eq 0 ]; then 
 
-		# Put LLVM in the path (it must come first to take over any prior LLVM install)
+	rm -f $LLVM_ENV_FILE
+
+	# Put LLVM in the path (it must come first to take over any prior LLVM install)
+	if [ "$LLVM_VERSION" = "packaged" ]; then
+
+		( echo "export PATH=/usr/bin:\$PATH"
+		  echo "export LD_LIBRARY_PATH=/usr/lib:\$LD_LIBRARY_PATH"
+		  echo "export CC=clang"
+		  echo "export CXX=clang++" ) > $LLVM_ENV_FILE
+
+	elif [ -n "$LLVM_VERSION" ]; then
+
 		( echo "export PATH=$LLVM_INSTALL_DIR/bin:\$PATH"
 		  echo "export LD_LIBRARY_PATH=$LLVM_INSTALL_DIR/lib:\$LD_LIBRARY_PATH"
 		  echo "export CC=clang"
 		  echo "export CXX=clang++" ) > $LLVM_ENV_FILE
+	else
+
+		( echo "export CC=clang"
+		  echo "export CXX=clang++" ) > $LLVM_ENV_FILE
+
 	fi
+
 fi
