@@ -22,7 +22,7 @@ For a non-test build, don't forget to provide the right installation prefix, oth
 
 ./build.sh --prefix=/ --update-bash-rc=yes
 
-If you are not on Ubuntu, the DEPENDENCY_SCRIPT in build.config must be updated to match your system or disabled. In the latter case, you must install all the dependencies manually before running the build script.
+If you are not on Ubuntu, the `DEPENDENCY_SCRIPT` in build.config must be updated to match your system or disabled. In the latter case, you must install all the dependencies manually before running the build script.
 
 Don't forget the build script might ask for a password several times, because sudo is invoked to install each built module.
 
@@ -63,9 +63,17 @@ So to prevent such issue to arise, if you are not sure, use a distinct build dir
 Test Builds
 -----------
 
-For test builds, don't forget to comment out DEPENDENCY_SCRIPT and SUDO variables in the build profile, because both requires 'sudo' that would prevent the build to happen in background without user feedback.
+A test build is a normal build, plus some steps:
 
-Rather than commenting out these variables, you can also request a test build as shown below:
+- run test suites (not yet implemented)
+- report build failure by mail
+
+And the following adjustments:
+
+- the dependency script is skipped if `SUDO` is empty in the build profile ('sudo' might prevent the build to happen in background without user feedback)
+- bash.rc is never updated (even when --update-bash-rc is 'yes')
+
+You can request a test build as shown below:
 
 	./build.sh [--profile=./someprofile.config] --test-build=yes
 
@@ -75,13 +83,15 @@ Mail Reporting
 
 The test build support gives you the possibility to report build failures by sending a mail. If the same build fails repeatedly for the same error, a mail is sent only once. In other words, a test build can be invoked every hour without getting flooded with the same build failure mail over and over (if the failure isn't quickly fixed).
 
-To set up the mail reporting, you must install the 'sendemail' program, edit the MAIL_TO variable (for the mail recipient) in the build profile and edit mail.config. Once it is done, source both the build profile and mail.config in your shell, and try send a mail:
+To set up the mail reporting, install the 'sendemail' program, edit the MAIL_TO variable (for the mail recipient) in the build profile and edit mail.config. Once it is done, source both the build profile and mail.config in your shell, and try send a mail:
 
 	. ./build.config
 	. ./mail.config
 	sendemail -f $MAIL_TO -t $MAIL_FROM -s $MAIL_SMTP_SEVER [-xu $MAIL_SMTP_USERNAME -xp $MAIL_SMTP_PASSWORD] -s "build.sh is my subject'
 
 If the mail is sent properly, you are ready to run test builds that report failures through the given mail config.
+
+**Note**: The Ubuntu dependency script will install 'sendemail' on the first build too.
 
 
 Debugging Builds
@@ -111,4 +121,4 @@ The build script generates some special scripts such as llvm-LLVM_VERSION.sh and
 
 Now you can move into modules directories, edit the source code and use **make** and **[sudo -E] make install** to test your changes.
 
-For being able to commit from the built modules (supposing you have commit access the related repositories), before running the build for the first time, SVN_ACCESS (for GNUstep and Etoile) and LLVM_SSVN_ACCESS (for LLVM) variables must be customized in the build profile.
+For being able to commit from the built modules (supposing you have commit access the related repositories), before running the build for the first time, SVN_ACCESS (for GNUstep) and LLVM_SVN_ACCESS (for LLVM) variables must be customized in the build profile.

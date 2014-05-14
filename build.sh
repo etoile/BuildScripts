@@ -2,8 +2,8 @@
 
 # Determine script path and directory
 
-cd $(dirname "${0}") 
-export SCRIPT_DIR=$(pwd -L)
+cd `dirname "$0"`
+export SCRIPT_DIR=`pwd -L`
 cd - 
 
 PROFILE_SCRIPT=$PWD/build.config
@@ -32,7 +32,7 @@ do
       echo "Type --option-name=value to set an option and quote the value when it contains "
       echo "spaces."
       echo
-      echo "  --profile               - Path to the build profile that describe the build "
+      echo "  --profile               - Path to the build profile that describes the build "
       echo "                            process (default: \$PWD/build.config)"
       echo "  --build-dir             - Name of the directory inside which the build will "
       echo "                            happen (default: \$PWD/build)"
@@ -43,9 +43,8 @@ do
       echo "                            repository code will be checked out in "
       echo "                            $build-dir/Etoile"
       echo "                            (default: trunk)"
-      echo "  --test-build            - Boolean value, either 'yes' or 'no', to disable "    
-      echo "                            some options and commands such as 'sudo' in test "
-      echo "                            builds."
+      echo "  --test-build            - Boolean value, either 'yes' or 'no', to enable or "    
+      echo "                            disable both mail reporting and test suites."
       echo "                            (default: no)"
       echo "  --force-llvm-configure  - Boolean value, either 'yes' or 'no', to indicate if "
       echo "                            configure should be run every time LLVM is built. "
@@ -170,11 +169,10 @@ exec >> "$out" 2>> "$out"
 #echo "bla"
 #cd $LOG_SUMMARY_FILE
 
-# Override some variables for test builds
+# Disable dependency install if there is no sudo access
 
-if [ "$TEST_BUILD" = "yes" ]; then
-#	DEPENDENCY_SCRIPT=
-	SUDO=
+if [ -z "$SUDO" ]; then
+	DEPENDENCY_SCRIPT=
 fi
 
 # Reset the environment in case a GNUstep intallation is in use
@@ -372,7 +370,7 @@ if [ $STATUS -ne 0 ]; then
 	# If the delta between the error logs has changed in the last two builds,
 	# it is a new build failure that must be reported by mail, otherwise it 
 	# is the same failure than previously (no need to report it once more).
-	if [ -n "$BUILD_DELTA" ]; then
+	if [ -n "$BUILD_DELTA" -a "$TEST_BUILD" = "yes" ]; then
 		echo "---> Sending mail to $MAIL_TO - $MAIL_SUBJECT"
 		echo
 

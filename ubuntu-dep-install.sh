@@ -29,6 +29,6 @@ fi
 
 sudo apt-get -q=2 install libonig-dev libstartup-notification0-dev libxcursor-dev libxss-dev xscreensaver g++ libpoppler-dev 
 
-# Install Subversion to be able to check out Etoile and Git for LLVM
+# Install build script tools
 
-sudo apt-get -q=2 install subversion git
+sudo apt-get -q=2 install subversion git sendemail
