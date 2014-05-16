@@ -77,12 +77,27 @@ elif [ -n "$LLVM_VERSION" -a ! -d $LLVM_SOURCE_DIR ]; then
 
 	echo "Fetching LLVM $LLVM_VERSION from LLVM release server"
 	wget -nc http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.gz
-	tar -xzf llvm-${LLVM_VERSION}.src.tar.gz 
-	mv llvm-${LLVM_VERSION}.src llvm-${LLVM_VERSION}
+	tar -xzf llvm-${LLVM_VERSION}.src.tar.gz
+
+	# Starting from 3.4, there is no '.src' suffix in the unarchived directory names
+	if [ -d llvm-${LLVM_VERSION}.src ]; then	
+		mv llvm-${LLVM_VERSION}.src llvm-${LLVM_VERSION}
+		UNARCHIVE_DIR_SUFFIX=".src"
+	fi
+
 	echo "Fetching Clang $LLVM_VERSION from LLVM release server"
-	wget -nc  http://llvm.org/releases/${LLVM_VERSION}/cfe-${LLVM_VERSION}.src.tar.gz
-	tar -xzf cfe-${LLVM_VERSION}.src.tar.gz
-	mv cfe-${LLVM_VERSION}.src llvm-${LLVM_VERSION}/tools/clang
+	# For the release 3.4, the archive was named 'clang', starting with 3.4.1, they 
+	# reverted to 'cfe'
+	CLANG_BASE_NAME=cfe-${LLVM_VERSION}
+	CLANG_ALT_BASE_NAME=clang-${LLVM_VERSION}
+
+	if ! wget -q --spider http://llvm.org/releases/${LLVM_VERSION}/${CLANG_BASE_NAME}.src.tar.gz; then
+		CLANG_BASE_NAME=$CLANG_ALT_BASE_NAME
+	fi
+
+	wget -nc  http://llvm.org/releases/${LLVM_VERSION}/${CLANG_BASE_NAME}.src.tar.gz
+	tar -xzf $CLANG_BASE_NAME.src.tar.gz	
+	mv ${CLANG_BASE_NAME}${UNARCHIVE_DIR_SUFFIX} llvm-${LLVM_VERSION}/tools/clang
 
 elif [ -z "$LLVM_VERSION" ]; then
 
