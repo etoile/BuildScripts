@@ -11,9 +11,7 @@ fi
 
 # The installs have been split up in to multiple apt-get commands because apt-get install
 # will fail to install all packages if a single package isn't available, and some packages
-# like hal are no longer available in recent Ubuntu versions. 
-
-sudo apt-get -q=2 install hal
+# are no longer available in recent Ubuntu versions. 
 
 sudo apt-get -q=2 install libjpeg-dev libtiff-dev libpng-dev libgif-dev
 
